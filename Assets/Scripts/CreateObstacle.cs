@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CreateObstacle : MonoBehaviour
 {
-    public GameObject obstaclePrefab;
+    public GameObject[] obstaclePrefabs;
     private float startDelay = 2f;
     private float repeatRate = 2f;
     public Vector3 obstaclePosition = new Vector3(25, 1, 0);
@@ -18,11 +18,20 @@ public class CreateObstacle : MonoBehaviour
 
     void Obstacle()
     {
+        float x = Random.Range(3, 5);//üretimi random yapmak için sabit çalýþtýrýðýmýz metodun içne yeni bir metod ýnvokelayarak random çalýþmasýný saðladýk
+
+        Invoke("RandomObsctacle", x);//ýnvokeseption
+
+
+    }
+    void RandomObsctacle()
+    {
+        int y = Random.Range(0, 2);
         if (playerControllerScript.gameOver == false)
+
         {
-            Instantiate(obstaclePrefab, obstaclePosition, obstaclePrefab.transform.rotation);
+            Instantiate(obstaclePrefabs[y], obstaclePosition, obstaclePrefabs[y].transform.rotation);
         }
-    
 
     }
 }

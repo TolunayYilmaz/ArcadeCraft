@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public bool isOnGround = true;
     public bool gameOver;
     private Animator playerAnim;
+    public ParticleSystem deadefect;
+    public ParticleSystem runEfect;
     void Start()
     {
         PlayerRb = GetComponent<Rigidbody>();
@@ -34,6 +36,7 @@ public class PlayerController : MonoBehaviour
             PlayerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
             playerAnim.SetTrigger("Jump_trig");
+            runEfect.Stop();
         }
 
     }
@@ -42,10 +45,13 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            runEfect.Play();
         }
 
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
+            deadefect.Play();
+            runEfect.Stop();
             Debug.Log("Game Over");
             gameOver = true;
             playerAnim.SetBool("Death_b", true);
