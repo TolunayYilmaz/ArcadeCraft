@@ -22,7 +22,10 @@ public class MoveLeft : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
+        if (transform.position.x < border && gameObject.CompareTag("Coin"))// coin alýnamadýðý zaman mapin disinda yok edilir.
+        {
+            Destroy(gameObject);
+        }
     }
 }
 
