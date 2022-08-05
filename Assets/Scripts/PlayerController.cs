@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody PlayerRb;
     public float jumpForce = 9;
     public float GravityModifiers = 1.5f;
-    public bool isOnGround = true;
+    public bool isOnGround =true;
+    public int doubleJumpControl = 0;
     public bool gameOver;
     private Animator playerAnim;
     public ParticleSystem deadefect;
@@ -20,43 +21,66 @@ public class PlayerController : MonoBehaviour
     private AudioSource playerAudio;
     public Text scoreUiText;
     private int score = 0;
+    public Text highScore;
+    
 
     void Start()
     {
         PlayerRb = GetComponent<Rigidbody>();
-        Physics.gravity *= GravityModifiers;
+        Physics.gravity = new Vector3(0,-GravityModifiers, 0);
         playerAnim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
+        highScore.text = PlayerPrefs.GetInt("HighScore").ToString();//highsocru getirmektedir.
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
         Jump();
-
+        doubleJump();
     }
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround&&!gameOver)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround &&!gameOver)
 
         {
             PlayerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isOnGround = false;
+            isOnGround =false;
             playerAnim.SetTrigger("Jump_trig");
             runEfect.Stop();
             playerAudio.PlayOneShot(jumpSound);
-           
-            
         }
 
+
+
+    }
+    private void doubleJump()
+    {
+        if (Input.GetKeyUp(KeyCode.Space) && !isOnGround && !gameOver)
+        {
+            doubleJumpControl += 1;//boolean deðer seçilmedi çünkü ikinci basýþta ayný hareketi sürekli tetiklediði için sonsuza kadar basma hakký tanýmaktadur.
+        }
+        else if (Input.GetKeyDown(KeyCode.Space) && doubleJumpControl == 1 && !isOnGround)
+
+        {
+            PlayerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+            playerAnim.SetTrigger("Jump_trig");
+            runEfect.Stop();
+            playerAudio.PlayOneShot(jumpSound);
+            Debug.Log("Double");
+
+
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            doubleJumpControl = 0;
             runEfect.Play();
         }
 
@@ -71,13 +95,22 @@ public class PlayerController : MonoBehaviour
             playerAudio.PlayOneShot(deadSound);
 
         }
-        if (collision.gameObject.CompareTag("Coin"))
+ 
+
+    }
+    private void OnTriggerEnter(Collider other)//coin toplarken coinlere çarpýþmamasý için trigger kullanýldý
+    {
+        if (other.CompareTag("Coin"))
         {
-            Destroy(collision.gameObject);
+            Destroy(other.gameObject);
             score += 10;
-            scoreUiText.text ="Score: "+ score.ToString();
+            scoreUiText.text = "Score: " + score.ToString();
 
+            if (PlayerPrefs.GetInt("HighScore") < score)
+            {
+                PlayerPrefs.SetInt("HighScore", score);
+                highScore.text=score.ToString();
+            }
         }
-
     }
 }
