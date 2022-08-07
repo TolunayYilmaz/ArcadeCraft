@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour
     public Text scoreUiText;
     private int score = 0;
     public Text highScore;
+    private GameManager gameManager;
     
+
 
     void Start()
     {
@@ -31,6 +33,9 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
         highScore.text = PlayerPrefs.GetInt("HighScore").ToString();//highsocru getirmektedir.
+
+
+        gameManager =GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();//Game Manager tipindeki script çekildi
     }
 
     // Update is called once per frame
@@ -90,6 +95,9 @@ public class PlayerController : MonoBehaviour
             runEfect.Stop();
             Debug.Log("Game Over");
             gameOver = true;
+            //Alt kodda game managerdaki state machine kullanbýlarak içindeki state deðiþtirildi.
+            gameManager.changeState = GameManager.GameState.gameOver;//GameState sayesinde GameManager scripttindeki update komutu iptal edildi ve performans artýþý saðlandý
+           
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
             playerAudio.PlayOneShot(deadSound);

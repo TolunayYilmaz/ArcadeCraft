@@ -6,23 +6,44 @@ public class GameManager : MonoBehaviour
 {
 
     public GameObject MenuPanel;
-    private PlayerController Game;
+ //   private PlayerController Game;
     public GameObject ScorePanel;
 
+    public enum GameState
+    {
+        none,
+        gameOver,
+
+    }
+    private GameState myState = GameState.none;  // %35_State_Loading_%35
+    public GameState changeState
+    {
+        get { return myState; }
+        set {
+            myState = value;
+          
+            switch (myState)
+            {
+                case GameState.gameOver:
+                    GameOver();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
     void Start()
     {
-        Game = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+       // Game = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         MenuPanel.SetActive(false);
         ScorePanel.SetActive(true);
     }
-    private void Update()
-    {
-        if (Game.gameOver == true)
-        {
-            ScorePanel.SetActive(false);
-            MenuPanel.SetActive(true);
 
-        }
+    private void GameOver()
+    {
+        ScorePanel.SetActive(false);
+        MenuPanel.SetActive(true);
     }
     public void LoadScene()
     {

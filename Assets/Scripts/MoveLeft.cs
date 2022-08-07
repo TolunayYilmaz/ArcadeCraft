@@ -18,6 +18,7 @@ public class MoveLeft : MonoBehaviour
 
         if (controller.gameOver == false)
             transform.Translate(Vector3.left * speed * Time.deltaTime);
+        
         if (transform.position.x < border && gameObject.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
